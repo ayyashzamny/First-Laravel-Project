@@ -15,13 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
 
-Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/post', [BlogController::class, 'post'])->name('blog.post');
 Route::post('/blog', [BlogController::class, 'store'])->name('blog.store');
-Route::get('/blog/{blog}/edit', [BlogController::class, 'edit'])->name('blog.edit');
-Route::put('/blog/{blog}/update', [BlogController::class, 'update'])->name('blog.update');
-Route::delete('/delete/{blog}', [BlogController::class, 'destroy'])->name('blog.destroy');
+Route::get('/blog/edit/{blog}', [BlogController::class, 'edit'])->name('blog.edit');
+Route::put('/blog/update/{blog}', [BlogController::class, 'update'])->name('blog.update'); // Changed to POST for AJAX
+Route::delete('/blog/{blog}', [BlogController::class, 'destroy'])->name('blog.destroy');

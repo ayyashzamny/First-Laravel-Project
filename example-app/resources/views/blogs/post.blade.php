@@ -52,19 +52,18 @@
                                     <li>{{$error}}</li>
                                 @endforeach
                             </ul>
-
-
                         @endif
                     </div>
 
-                    <form method="POST" action="{{route('blog.store')}}">
+                    <form id="blogForm">
                         @csrf
                         @method('POST')
                         <label for="postTitle">Title:</label>
-                        <input type="text" id="title" name="title" class="form-control" required>
+                        <input type="text" id="title" name="title" class="form-control" placeholder="Title" required>
 
                         <label for="postContent">Content:</label>
-                        <textarea id="content" name="content" rows="8" class="form-control" required></textarea>
+                        <textarea id="content" name="content" rows="8" class="form-control" placeholder="Content"
+                            required></textarea>
 
                         <button type="submit" class="btn btn-primary mt-3">Submit</button>
                         <button type="reset" class="btn btn-secondary mt-3 ms-2">Clear</button>
@@ -74,6 +73,51 @@
         </div>
     </div>
 
+    <script>
+        document.getElementById('blogForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let formData = new FormData(this);
+
+            fetch("{{route('blog.store')}}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            document.getElementById('blogForm').reset();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong!',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        });
+    </script>
 
 </body>
 

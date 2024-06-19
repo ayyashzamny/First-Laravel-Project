@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="styles/index.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -28,11 +29,11 @@
             <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{route('blog.index')}}">All Posts</a>
+                        <a class="nav-link active" aria-current="page" href="{{ route('blog.index') }}">All Posts</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('blog.post')}}">Add New</a>
+                        <a class="nav-link" href="{{ route('blog.post') }}">Add New</a>
                     </li>
                 </ul>
             </div>
@@ -51,7 +52,7 @@
 
         <section class="row">
             @foreach ($blogs as $blog)
-                <article class="col-md-4 mb-4">
+                <article class="col-md-4 mb-4" id="blog-{{ $blog->id }}">
                     <div class="card">
                         <div class="card-header bg-dark text-white">
                             <h5 class="card-title">{{ $blog->title }}</h5>
@@ -60,11 +61,7 @@
                             <p class="card-text">{{ $blog->content }}</p>
                             <a href="{{ route('blog.edit', ['blog' => $blog]) }}" class="btn btn-success btn-sm">Edit</a>
 
-                            <form action="{{ route('blog.destroy', ['blog' => $blog]) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
+                            <button class="btn btn-danger btn-sm delete-button" data-id="{{ $blog->id }}">Delete</button>
                         </div>
                         <div class="card-footer text-muted">Posted On: {{ $blog->updated_at }}</div>
                     </div>
@@ -72,6 +69,53 @@
             @endforeach
         </section>
     </main>
+
+    <script>
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const blogId = this.getAttribute('data-id');
+
+                fetch(`/blog/${blogId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                document.getElementById(`blog-${blogId}`).remove();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong!',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+            });
+        });
+    </script>
+
 </body>
 
 </html>

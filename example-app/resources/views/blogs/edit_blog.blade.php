@@ -17,7 +17,7 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Blogger</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -28,11 +28,11 @@
             <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link " aria-current="page" href="{{route('blog.index')}}">All Posts</a>
+                        <a class="nav-link" aria-current="page" href="{{ route('blog.index') }}">All Posts</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{route('blog.post')}}">Add New</a>
+                        <a class="nav-link active" href="{{ route('blog.post') }}">Add New</a>
                     </li>
                 </ul>
             </div>
@@ -55,12 +55,12 @@
                         @endif
                     </div>
 
-                    <form method="POST" action="{{route('blog.update' , ['blog' => $blog])}}">
+                    <form id="editBlogForm">
                         @csrf
                         @method('PUT')
                         <label for="postTitle">Title:</label>
                         <input type="text" id="title" name="title" class="form-control"
-                            value="{{$blog->title}}" required>
+                            value="{{ $blog->title }}" required>
 
                         <label for="postContent">Content:</label>
                         <textarea id="content" name="content" rows="8" class="form-control"
@@ -73,6 +73,54 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('editBlogForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let formData = new FormData(this);
+            let blogId = {{ $blog->id }};
+            
+            fetch(`/blog/update/${blogId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = "{{ route('blog.index') }}";
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong!',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        });
+    </script>
+
 </body>
 
 </html>

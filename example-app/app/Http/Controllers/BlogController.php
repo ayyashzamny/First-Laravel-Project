@@ -29,8 +29,10 @@ class BlogController extends Controller
 
         $newBlog = blogs::create($data);
 
-        return redirect(route('blog.index'));
-
+        return response()->json([
+            'success' => true,
+            'message' => 'Blog post created successfully!'
+        ]);
     }
 
     public function edit(blogs $blog)
@@ -47,13 +49,20 @@ class BlogController extends Controller
 
         $blog->update($data);
 
-        return redirect(route('blog.index'))->with('message', 'Blog Updated Successfully');
+        return response()->json([
+            'success' => true,
+            'message' => 'Blog updated successfully!'
+        ]);
     }
 
 
     public function destroy(blogs $blog)
     {
         $blog->delete();
-        return redirect()->route('blog.index')->with('message', 'Blog deleted successfully.');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Blog deleted successfully.'
+        ]);
     }
 }
