@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (result.isConfirmed) {
                 // Proceed with the update request
                 fetch(`/blog/update/${editId}`, {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken

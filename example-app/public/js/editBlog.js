@@ -20,46 +20,58 @@ document.addEventListener('DOMContentLoaded', function () {
         // Get the blog ID from the hidden input field
         let blogId = document.getElementById('blogId').value;
 
-        // Send the update request to the server using fetch API
-        fetch(`/blog/update/${blogId}`, {
-            method: 'POST', // Use POST method for the update request
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'), // Add CSRF token for security
-                'Accept': 'application/json', // Expect a JSON response
-            },
-            body: formData // Send the form data in the request body
-        })
-        .then(response => response.json()) // Parse the JSON response
-        .then(data => {
-            if (data.success) {
-                // If the update is successful, show a success message using SweetAlert
-                Swal.fire({
-                    title: 'Success!',
-                    text: data.message,
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.reload(); // Reload the page after success
-                });
-            } else {
-                // If the update fails, show an error message using SweetAlert
-                Swal.fire({
-                    title: 'Error!',
-                    text: data.message,
-                    icon: 'error',
-                    confirmButtonText: 'OK'
+        // Show confirmation dialog before submitting the form
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to update this blog post?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Proceed with the update request
+                fetch(`/blog/update/${blogId}`, {
+                    method: 'POST', // Use POST method for the update request
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'), // Add CSRF token for security
+                        'Accept': 'application/json', // Expect a JSON response
+                    },
+                    body: formData // Send the form data in the request body
+                })
+                .then(response => response.json()) // Parse the JSON response
+                .then(data => {
+                    if (data.success) {
+                        // If the update is successful, show a success message using SweetAlert
+                        Swal.fire({
+                            title: 'Success!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.reload(); // Reload the page after success
+                        });
+                    } else {
+                        // If the update fails, show an error message using SweetAlert
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    // Catch any network or server errors and display an error message using SweetAlert
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong!',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 });
             }
-        })
-        .catch(error => {
-            // Catch any network or server errors and display an error message using SweetAlert
-            console.error('Error:', error);
-            Swal.fire({
-                title: 'Error!',
-                text: 'Something went wrong!',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
         });
     });
 });
