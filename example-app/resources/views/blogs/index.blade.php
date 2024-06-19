@@ -1,5 +1,3 @@
-<!-- resources/views/blog/index.blade.php -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,10 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blogger</title>
-    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="/css/index.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -34,6 +33,10 @@
 
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('blog.post') }}">Add New</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{route('blog.show')}}">Table</a>
                     </li>
                 </ul>
             </div>
@@ -70,52 +73,7 @@
         </section>
     </main>
 
-    <script>
-        document.querySelectorAll('.delete-button').forEach(button => {
-            button.addEventListener('click', function () {
-                const blogId = this.getAttribute('data-id');
-
-                fetch(`/blog/${blogId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'Success!',
-                                text: data.message,
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            }).then(() => {
-                                document.getElementById(`blog-${blogId}`).remove();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: data.message,
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Something went wrong!',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    });
-            });
-        });
-    </script>
-
+    <script src="/js/deleteBlog.js"></script>
 </body>
 
 </html>

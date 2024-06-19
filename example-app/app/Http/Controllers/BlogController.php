@@ -23,8 +23,8 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title' => 'required',
-            'content' => 'required'
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
         ]);
 
         $newBlog = blogs::create($data);
@@ -64,5 +64,12 @@ class BlogController extends Controller
             'success' => true,
             'message' => 'Blog deleted successfully.'
         ]);
+    }
+
+
+    public function showTable()
+    {
+        $blogs = blogs::all();
+        return view('blogs.table', ['blogs' => $blogs]);
     }
 }

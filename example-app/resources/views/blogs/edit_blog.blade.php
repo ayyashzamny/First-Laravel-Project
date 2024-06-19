@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Post Form</title>
-    <link rel="stylesheet" href="Styles/newPost.css">
-    <link rel="stylesheet" href="Styles/header.css">
+    <link rel="stylesheet" href="/css/newPost.css">
+    <link rel="stylesheet" href="/css/header.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -58,6 +58,7 @@
                     <form id="editBlogForm">
                         @csrf
                         @method('PUT')
+                        <input type="hidden" id="blogId" value="{{ $blog->id }}">
                         <label for="postTitle">Title:</label>
                         <input type="text" id="title" name="title" class="form-control"
                             value="{{ $blog->title }}" required>
@@ -74,53 +75,7 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('editBlogForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            let formData = new FormData(this);
-            let blogId = {{ $blog->id }};
-            
-            fetch(`/blog/update/${blogId}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                    'Accept': 'application/json',
-                },
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: data.message,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.location.href = "{{ route('blog.index') }}";
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: data.message,
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Something went wrong!',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                });
-        });
-    </script>
-
+    <script src="/js/editBlog.js"></script>
 </body>
 
 </html>

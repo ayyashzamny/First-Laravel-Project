@@ -28,11 +28,15 @@
             <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link " aria-current="page" href="{{route('blog.index')}}">All Posts</a>
+                        <a class="nav-link " aria-current="page" href="{{ route('blog.index') }}">All Posts</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{route('blog.post')}}">Add New</a>
+                        <a class="nav-link active" href="{{ route('blog.post') }}">Add New</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{route('blog.show')}}">Table</a>
                     </li>
                 </ul>
             </div>
@@ -49,7 +53,7 @@
                         @if($errors->any())
                             <ul>
                                 @foreach($errors->all() as $error)
-                                    <li>{{$error}}</li>
+                                    <li>{{ $error }}</li>
                                 @endforeach
                             </ul>
                         @endif
@@ -57,7 +61,6 @@
 
                     <form id="blogForm">
                         @csrf
-                        @method('POST')
                         <label for="postTitle">Title:</label>
                         <input type="text" id="title" name="title" class="form-control" placeholder="Title" required>
 
@@ -68,57 +71,13 @@
                         <button type="submit" class="btn btn-primary mt-3">Submit</button>
                         <button type="reset" class="btn btn-secondary mt-3 ms-2">Clear</button>
                     </form>
+
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        document.getElementById('blogForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            let formData = new FormData(this);
-
-            fetch("{{route('blog.store')}}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                    'Accept': 'application/json',
-                },
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: data.message,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            document.getElementById('blogForm').reset();
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: data.message,
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Something went wrong!',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                });
-        });
-    </script>
-
+    <script src="/js/blogForm.js"></script>
 </body>
 
 </html>
