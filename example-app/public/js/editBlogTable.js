@@ -1,18 +1,21 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // DataTable initialization
+    $('#blogTable').DataTable();
+
     // Get the edit form element
-    const editForm = document.getElementById('editForm');
+    const editForm = document.getElementById('editBlogForm');
     
     // Get references to the modal and its components
-    const editModal = new bootstrap.Modal(document.getElementById('editModal'));
-    const editModalTitle = document.getElementById('editModalLabel');
-    const editModalCloseBtn = document.querySelector('#editModal .btn-close');
+    const editModal = new bootstrap.Modal(document.getElementById('editBlogModal'));
+    const editModalTitle = document.getElementById('editBlogModalLabel');
+    const editModalCloseBtn = document.querySelector('#editBlogModal .btn-close');
 
     // Add submit event listener to the edit form
     editForm.addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent default form submission behavior
 
         // Get values from form inputs
-        const editId = document.getElementById('editId').value;
+        const blogId = document.getElementById('blogId').value;
         const editTitle = document.getElementById('editTitle').value;
         const editContent = document.getElementById('editContent').value;
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -28,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 // Proceed with the update request
-                fetch(`/blog/update/${editId}`, {
+                fetch(`/blog/Tableupdate/${blogId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -39,7 +42,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         content: editContent
                     })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         // If update is successful, show success message
@@ -50,7 +58,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             confirmButtonText: 'OK'
                         }).then(() => {
                             editModal.hide(); // Close the modal
-                            updateBlogTable(); // Refresh blog table
+                            // Update the table row with new data
+                            const row = document.getElementById('blog-' + blogId);
+                            row.children[0].textContent = editTitle;
+                            row.children[1].textContent = editContent;
                         });
                     } else {
                         // If update fails, show error message
@@ -76,12 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Function to update the blog table after successful update
-    function updateBlogTable() {
-        // Reload the page to reflect updated data
-        location.reload();
-    }
-
     // Add click event listeners to all elements with class '.edit-button'
     document.querySelectorAll('.edit-button').forEach(button => {
         button.addEventListener('click', function (event) {
@@ -93,20 +98,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const blogContent = this.getAttribute('data-content');
 
             // Set values in edit form fields
-            document.getElementById('editId').value = blogId;
+            document.getElementById('blogId').value = blogId;
             document.getElementById('editTitle').value = blogTitle;
             document.getElementById('editContent').value = blogContent;
 
-            // Set modal title dynamically
-            editModalTitle.textContent = 'Edit Blog Post';
-
-            // Show the edit modal
+            // Show the modal
             editModal.show();
         });
-    });
-
-    // Close modal when the close button is clicked
-    editModalCloseBtn.addEventListener('click', function () {
-        editModal.hide();
     });
 });

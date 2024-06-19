@@ -72,4 +72,19 @@ class BlogController extends Controller
         $blogs = blogs::all();
         return view('blogs.table', ['blogs' => $blogs]);
     }
+
+    public function updateTable(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $blog = Blogs::findOrFail($id);
+        $blog->title = $request->input('title');
+        $blog->content = $request->input('content');
+        $blog->save();
+
+        return response()->json(['success' => true, 'message' => 'Blog post updated successfully']);
+    }
 }

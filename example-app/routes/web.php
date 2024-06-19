@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-
+//routes for blog
 Route::get('/', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/post', [BlogController::class, 'post'])->name('blog.post');
 Route::post('/blogStore', [BlogController::class, 'store'])->name('blog.store');
@@ -24,3 +24,4 @@ Route::get('/blog/edit/{blog}', [BlogController::class, 'edit'])->name('blog.edi
 Route::put('/blog/update/{blog}', [BlogController::class, 'update'])->name('blog.update'); // Changed to POST for AJAX
 Route::delete('/blogDelete/{blog}', [BlogController::class, 'destroy'])->name('blog.destroy');
 Route::get('/blogTable', [BlogController::class, 'showTable'])->name('blog.show');
+Route::put('/blog/Tableupdate/{id}', [BlogController::class, 'updateTable'])->name('blog.updateTable');
