@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Get the edit form element
     const editForm = document.getElementById('editForm');
+    
+    // Get references to the modal and its components
+    const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+    const editModalTitle = document.getElementById('editModalLabel');
+    const editModalCloseBtn = document.querySelector('#editModal .btn-close');
 
     // Add submit event listener to the edit form
     editForm.addEventListener('submit', function (event) {
@@ -44,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            $('#editModal').modal('hide'); // Close the modal
+                            editModal.hide(); // Close the modal
                             updateBlogTable(); // Refresh blog table
                         });
                     } else {
@@ -91,6 +96,17 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('editId').value = blogId;
             document.getElementById('editTitle').value = blogTitle;
             document.getElementById('editContent').value = blogContent;
+
+            // Set modal title dynamically
+            editModalTitle.textContent = 'Edit Blog Post';
+
+            // Show the edit modal
+            editModal.show();
         });
+    });
+
+    // Close modal when the close button is clicked
+    editModalCloseBtn.addEventListener('click', function () {
+        editModal.hide();
     });
 });

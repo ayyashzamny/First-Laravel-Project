@@ -77,8 +77,7 @@
                             <td>
                                 <!-- Edit Button -->
                                 <a href="#" class="btn btn-success btn-sm edit-button" data-id="{{ $blog->id }}"
-                                    data-title="{{ $blog->title }}" data-content="{{ $blog->content }}"
-                                    data-bs-toggle="modal" data-bs-target="#editModal">Edit</a>
+                                    data-title="{{ $blog->title }}" data-content="{{ $blog->content }}">Edit</a>
                                 <!-- Delete Button -->
                                 <button class="btn btn-danger btn-sm delete-button"
                                     data-id="{{ $blog->id }}">Delete</button>
